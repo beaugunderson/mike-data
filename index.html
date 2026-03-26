@@ -493,14 +493,6 @@ function renderPriceChart(ohlc, milestones) {
       ))
       .on("mouseleave", hideTip);
 
-    // Label (alternating above/below to avoid overlap)
-    const labelY = Math.max(my - 46, 4);
-    svg.append("text")
-      .attr("class", "milestone-label")
-      .attr("x", mx)
-      .attr("y", labelY)
-      .attr("text-anchor", mx > w * 0.8 ? "end" : mx < w * 0.2 ? "start" : "middle")
-      .text(m.label);
   });
 
   // Axes
