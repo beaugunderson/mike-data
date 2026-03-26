@@ -385,13 +385,21 @@ const DATA = {"ohlc":[{"date":"2008-01-26","open":1.0,"high":3.0,"low":1.0,"clos
 
 function renderHeroStats(ohlc, trades, votes, totalUsers) {
   const lastPrice = ohlc[ohlc.length - 1].close;
+  const highPrice = d3.max(ohlc, d => d.high);
+  const lowPrice = d3.min(ohlc, d => d.low);
+  const totalComments = votes.reduce((s, v) => s + v.comments, 0);
+  const totalVotesCast = votes.reduce((s, v) => s + v.voters, 0);
   const stats = [
     { value: "18", label: "Years running" },
     { value: fmt(totalUsers), label: "Shareholders" },
+    { value: fmtPrice(lastPrice), label: "Current price" },
+    { value: fmtPrice(highPrice), label: "All-time high" },
+    { value: fmtPrice(lowPrice), label: "All-time low" },
     { value: fmt(trades.reduce((s, t) => s + t.trades, 0)), label: "Trades" },
     { value: fmtDollar(trades.reduce((s, t) => s + t.volume, 0)), label: "Volume traded" },
     { value: fmt(votes.length), label: "Votes held" },
-    { value: fmtPrice(lastPrice), label: "Current share price" },
+    { value: fmt(totalVotesCast), label: "Votes cast" },
+    { value: fmt(totalComments), label: "Vote comments" },
   ];
   const row = d3.select("#hero-stats");
   stats.forEach((s, i) => {
