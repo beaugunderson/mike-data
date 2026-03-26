@@ -749,13 +749,12 @@ function renderSharesPerVote(votes) {
     .domain(d3.extent(real, d => d._date))
     .range([0, w]);
 
-  const y = d3.scaleLog()
-    .domain([10, d3.max(real, d => d.shares_voted) * 1.2])
-    .range([h, 0])
-    .clamp(true);
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(real, d => d.shares_voted) * 1.1])
+    .range([h, 0]);
 
   svg.append("g").attr("class", "grid")
-    .call(d3.axisLeft(y).tickValues([10, 50, 100, 500, 1000, 5000, 10000]).tickSize(-w).tickFormat(""));
+    .call(d3.axisLeft(y).ticks(5).tickSize(-w).tickFormat(""));
 
   // Area fill
   const area = d3.area()
@@ -818,7 +817,7 @@ function renderSharesPerVote(votes) {
     .call(d3.axisBottom(x).ticks(d3.timeYear.every(1)).tickFormat(d3.timeFormat("'%y")));
 
   svg.append("g").attr("class", "axis")
-    .call(d3.axisLeft(y).tickValues([10, 50, 100, 500, 1000, 5000, 10000]).tickFormat(d => fmt(d)));
+    .call(d3.axisLeft(y).ticks(5).tickFormat(d => fmt(d)));
 }
 
 
