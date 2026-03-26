@@ -460,21 +460,7 @@ function renderPriceChart(ohlc, milestones) {
     .transition().duration(2500).ease(d3.easeCubicOut)
     .attr("stroke-dashoffset", 0);
 
-  // Milestone dashed lines (non-interactive, rendered under hover rect)
   const msBisect = d3.bisector(d => d._date).left;
-  milestones.forEach(m => {
-    const mx = x(m._date);
-    const idx = Math.min(msBisect(ohlc, m._date), ohlc.length - 1);
-    const my = y(ohlc[idx].close);
-    svg.append("line")
-      .attr("x1", mx).attr("x2", mx)
-      .attr("y1", my - 6).attr("y2", Math.max(my - 40, 0))
-      .attr("stroke", "var(--warm)")
-      .attr("stroke-width", 1)
-      .attr("stroke-dasharray", "2,2")
-      .attr("opacity", 0.6)
-      .style("pointer-events", "none");
-  });
 
   // Axes
   svg.append("g").attr("class", "axis")
@@ -529,31 +515,6 @@ function renderPriceChart(ohlc, milestones) {
     const price = ohlc[idx].close;
     const my = y(price);
 
-    const labelY = Math.max(my - 48, 8);
-    const anchor = mx > w * 0.8 ? "end" : mx < w * 0.15 ? "start" : "middle";
-    const labelText = svg.append("text")
-      .attr("x", mx).attr("y", labelY)
-      .attr("text-anchor", anchor)
-      .attr("fill", "var(--warm)")
-      .style("font-family", "var(--font-mono)")
-      .style("font-size", "10px")
-      .style("font-weight", "500")
-      .style("pointer-events", "none")
-      .style("opacity", 0)
-      .text(m.label);
-
-    const bbox = labelText.node().getBBox();
-    const pad = 4;
-    const labelBg = svg.insert("rect", () => labelText.node())
-      .attr("x", bbox.x - pad).attr("y", bbox.y - pad)
-      .attr("width", bbox.width + pad * 2).attr("height", bbox.height + pad * 2)
-      .attr("rx", 3)
-      .attr("fill", "var(--bg-card)")
-      .attr("stroke", "var(--border)")
-      .attr("stroke-width", 0.5)
-      .style("pointer-events", "none")
-      .style("opacity", 0);
-
     svg.append("circle")
       .attr("cx", mx).attr("cy", my)
       .attr("r", 6)
@@ -561,20 +522,12 @@ function renderPriceChart(ohlc, milestones) {
       .attr("stroke", "var(--bg-card)")
       .attr("stroke-width", 1.5)
       .style("cursor", "pointer")
-      .on("mouseenter", () => {
-        labelText.style("opacity", 1);
-        labelBg.style("opacity", 1);
-      })
       .on("mousemove", evt => showTip(evt,
         `<div class="tt-label">${d3.timeFormat("%b %d, %Y")(m._date)}</div>
          <div><span class="tt-warm">${m.label}</span></div>
          <div>Price: <span class="tt-value">${fmtPrice(price)}</span></div>`
       ))
-      .on("mouseleave", () => {
-        hideTip();
-        labelText.style("opacity", 0);
-        labelBg.style("opacity", 0);
-      });
+      .on("mouseleave", hideTip);
   });
 }
 
