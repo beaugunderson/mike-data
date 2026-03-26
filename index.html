@@ -635,9 +635,10 @@ function renderVoteBubbles(votes) {
     .domain([0, d3.max(votes, d => d.voters) * 1.15])
     .range([h, 0]);
 
-  const r = d3.scaleSqrt()
-    .domain([0, d3.max(votes, d => d.shares_voted)])
-    .range([2, 18]);
+  const r = d3.scaleLog()
+    .domain([1, d3.max(votes, d => d.shares_voted)])
+    .range([2, 18])
+    .clamp(true);
 
   const color = d3.scaleSequential()
     .domain([0, d3.max(votes, d => d.comments)])
