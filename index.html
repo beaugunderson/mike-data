@@ -619,6 +619,7 @@ function renderVoteBubbles(votes) {
   const el = document.getElementById("chart-votes");
   const { width, height, margin: m } = dims(el, 0.55);
   m.bottom = 44;
+  m.right = 36;
   const w = width - m.left - m.right;
   const h = height - m.top - m.bottom;
 
