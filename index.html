@@ -779,16 +779,22 @@ function renderActivityChart(trades) {
   svg.append("g").attr("class", "grid")
     .call(d3.axisLeft(yTrades).ticks(5).tickSize(-w).tickFormat(""));
 
-  const barW = Math.max(2, w / trades.length - 2);
+  // Wide bars where months are sparse, narrowing where neighbors crowd in
+  const wideW = Math.max(2, w / trades.length - 2);
+  const barW = (d, i) => {
+    const gapL = i > 0 ? x(d._date) - x(trades[i - 1]._date) : Infinity;
+    const gapR = i < trades.length - 1 ? x(trades[i + 1]._date) - x(d._date) : Infinity;
+    return Math.max(1.5, Math.min(wideW, gapL - 1, gapR - 1));
+  };
   svg.selectAll(".trade-bar")
     .data(trades).enter()
     .append("rect")
-    .attr("x", d => x(d._date) - barW / 2)
+    .attr("x", (d, i) => x(d._date) - barW(d, i) / 2)
     .attr("y", h)
     .attr("width", barW)
     .attr("height", 0)
     .attr("fill", "var(--accent)")
-    .attr("opacity", 0.6)
+    .attr("opacity", 0.85)
     .attr("rx", 1)
     .on("mousemove", (evt, d) => showTip(evt,
       `<div class="tt-label">${d3.timeFormat("%b %Y")(d._date)}</div>
